@@ -66,6 +66,10 @@ def run_memory(memory, reg):
     # Grab instructions
     lower = bits[14:18]
 
+    # Grab indexing mode
+    indexmode = bits[18:22]
+    indexreg  = bits[22:24]
+
     # LD
     if lower == '0000':
         print("Not implemented")
@@ -173,7 +177,6 @@ def run_jump(memory, reg):
 
     # Grab instructions
     lower = bits[14:18]
-
 
     # J
     if lower == '0000':

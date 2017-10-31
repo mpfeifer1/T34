@@ -96,13 +96,25 @@ def print_trace(memory, reg):
     addr = to_printable(pc, 3)
     inst = to_printable(instruction, 6)
 
+    # Get data necessary for addressing mode
+    bits = to_printable(instruction, 24, True)
+    addridx = bits[18:22]
+    upper = bits[12:14]
+    mode = inst[:3]
+
+    # Get addressing mode
+    if addridx == '0001':
+        mode = "IMM"
+    if upper == '00':
+        mode = "   "
+
     # Get other registers
     ac = 'AC[' + to_printable(reg['ac'], 6) + ']'
     x1 = 'X0[' + to_printable(reg['x0'], 3) + ']'
     x2 = 'X1[' + to_printable(reg['x1'], 3) + ']'
     x3 = 'X2[' + to_printable(reg['x2'], 3) + ']'
     x4 = 'X3[' + to_printable(reg['x3'], 3) + ']'
-    print(addr + ":", inst, name, ac, x1, x2, x3, x4, sep='  ')
+    print(addr + ":", inst, name, mode, ac, x1, x2, x3, x4, sep='  ')
 
     return
 

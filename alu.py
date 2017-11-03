@@ -212,7 +212,7 @@ def run_alu(memory, reg):
     # COM
     if lower == '0011':
         # Subtract the max possible by the current total to get val
-        reg['ac'] = 16777215 - reg['ac']
+        reg['ac'] = 2**24-1 - reg['ac']
         return (True, )
 
     # AND

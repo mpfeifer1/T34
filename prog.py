@@ -114,6 +114,9 @@ def print_trace(memory, reg):
     if upper == '00':
         mode = "   "
 
+    if addridx not in ['0000', '0001']:
+        mode = "???"
+
     print(addr + ":", inst, name, mode, sep='  ', end='  ')
 
     return

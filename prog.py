@@ -80,9 +80,12 @@ def main(infile):
 
 # Executes a line of code, and returns true if the emulator should be halted
 def execute(memory, reg):
+    # Run command
     print_trace(memory, reg)
     ret = run_instruction(memory, reg)
     print_result(memory, reg)
+
+    # Check termination
     if len(ret) > 1:
         print(ret[1])
     return ret[0]

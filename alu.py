@@ -119,20 +119,33 @@ def run_memory(memory, reg):
 
     # LD
     if lower == '0000':
-        if mode not in ['0000', '0001', '0010', '0100', '0110']:
+        if mode in ['0000', '0001']:
+            reg['ac'] = val
+            return (True, )
+        elif mode in ['0010', '0100', '0110']:
+            return (False, "Machine Halted - unimplemented addressing mode")
+        else:
             return (False, "Machine Halted - illegal addressing mode")
-        reg['ac'] = val
-        return (True, )
 
     # ST
     if lower == '0001':
-        memory[val] = reg['ac']
-        return (True, )
+        if mode in ['0000', '0001']:
+            memory[val] = reg['ac']
+            return (True, )
+        elif mode in ['0010', '0100', '0110']:
+            return (False, "Machine Halted - unimplemented addressing mode")
+        else:
+            return (False, "Machine Halted - illegal addressing mode")
 
     # EM
     if lower == '0010':
-        memory[val], reg['ac'] = reg['ac'], memory[val]
-        return (True, )
+        if mode in ['0000', '0001']:
+            memory[val], reg['ac'] = reg['ac'], memory[val]
+            return (True, )
+        elif mode in ['0010', '0100', '0110']:
+            return (False, "Machine Halted - unimplemented addressing mode")
+        else:
+            return (False, "Machine Halted - illegal addressing mode")
 
     # LDX
     if lower == '1000':
@@ -167,6 +180,8 @@ def run_alu(memory, reg):
         if mode in ['0000', '0001']:
             reg['ac'] += val
             return (True, )
+        elif mode in ['0010', '0100', '0110']:
+            return (False, "Machine Halted - unimplemented addressing mode")
         else:
             return (False, "Machine Halted - illegal addressing mode")
 
@@ -175,6 +190,8 @@ def run_alu(memory, reg):
         if mode in ['0000', '0001']:
             reg['ac'] -= val
             return (True, )
+        elif mode in ['0010', '0100', '0110']:
+            return (False, "Machine Halted - unimplemented addressing mode")
         else:
             return (False, "Machine Halted - illegal addressing mode")
 

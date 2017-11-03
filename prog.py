@@ -81,8 +81,11 @@ def main(infile):
 # Executes a line of code, and returns true if the emulator should be halted
 def execute(memory, reg):
     print_trace(memory, reg)
-    running = run_instruction(memory, reg)
-    return running
+    ret = run_instruction(memory, reg)
+    print_result(memory, reg)
+    if len(ret) > 1:
+        print(ret[1])
+    return ret[0]
 
 
 
@@ -108,13 +111,20 @@ def print_trace(memory, reg):
     if upper == '00':
         mode = "   "
 
+    print(addr + ":", inst, name, mode, sep='  ', end='  ')
+
+    return
+
+
+
+def print_result(memory, reg):
     # Get other registers
     ac = 'AC[' + to_printable(reg['ac'], 6) + ']'
     x1 = 'X0[' + to_printable(reg['x0'], 3) + ']'
     x2 = 'X1[' + to_printable(reg['x1'], 3) + ']'
     x3 = 'X2[' + to_printable(reg['x2'], 3) + ']'
     x4 = 'X3[' + to_printable(reg['x3'], 3) + ']'
-    print(addr + ":", inst, name, mode, ac, x1, x2, x3, x4, sep='  ')
+    print(ac, x1, x2, x3, x4, sep='  ')
 
     return
 

@@ -2,6 +2,53 @@ from util import *
 
 
 
+def indexing_mode(memory, reg):
+    # Get instruction in binary
+    instruction = memory[reg['pc']]
+    bits = to_printable(instruction, 24, True)
+
+    # Grab indexing mode
+    indexmode = bits[18:22]
+
+    # Find indexing register
+    indexreg  = bits[22:24]
+    if indexreg == '00':
+        indexreg = 'x0'
+    if indexreg == '01':
+        indexreg = 'x1'
+    if indexreg == '10':
+        indexreg = 'x2'
+    if indexreg == '11':
+        indexreg = 'x3'
+
+    # Find corresponding EA
+    ea = None
+
+    # Direct
+    if indexmode == '0000':
+        ea = memory[int(bits[0:12], 2)]
+
+    # Immediate
+    if indexmode == '0001':
+        ea = int(bits[0:12], 2)
+
+    # Indexed
+    if indexmode == '0010':
+        pass
+
+    # Indirect
+    if indexmode == '0100':
+        pass
+
+    # Indexed Indirect
+    if indexmode == '0110':
+        pass
+
+    # Return
+    return indexmode, ea
+
+
+
 def run_instruction(memory, reg):
     # Get instruction in binary
     instruction = memory[reg['pc']]
@@ -10,24 +57,27 @@ def run_instruction(memory, reg):
     # Grab instructions
     upper = bits[12:14]
 
+    # Get indexing mode (EA)
+    ea = indexing_mode(memory, reg)
+
     # Whether to keep running after command
-    running = True
+    running = (True, )
 
     # Miscellaneous
     if upper == '00':
-        running &= run_misc(memory, reg)
+        running = run_misc(memory, reg)
 
     # Memory
     if upper == '01':
-        running &= run_memory(memory, reg)
+        running = run_memory(memory, reg)
 
     # ALU
     if upper == '10':
-        running &= run_alu(memory, reg)
+        running = run_alu(memory, reg)
 
     # Jump
     if upper == '11':
-        running &= run_jump(memory, reg)
+        running = run_jump(memory, reg)
     else:
         reg['pc'] += 1
 
@@ -45,16 +95,14 @@ def run_misc(memory, reg):
 
     # HALT
     if lower == '0000':
-        print("Machine Halted - HALT instruction executed")
-        return False
+        return (False, "Machine Halted - HALT instruction executed")
 
     # NOP
     if lower == '0001':
-        return True
+        return (True, )
 
     # Unknown command
-    print("Machine Halted - undefined opcode")
-    return False
+    return (False, "Machine Halted - undefined opcode")
 
 
 
@@ -66,43 +114,40 @@ def run_memory(memory, reg):
     # Grab instructions
     lower = bits[14:18]
 
-    # Grab indexing mode
-    indexmode = bits[18:22]
-    indexreg  = bits[22:24]
+    # Get the indexing mode
+    mode, val = indexing_mode(memory, reg)
 
     # LD
     if lower == '0000':
-        print("Not implemented")
-        return True
+        if mode not in ['0000', '0001', '0010', '0100', '0110']:
+            return (False, "Machine Halted - illegal addressing mode")
+        reg['ac'] = val
+        return (True, )
 
     # ST
     if lower == '0001':
-        print("Not implemented")
-        return True
+        memory[val] = reg['ac']
+        return (True, )
 
     # EM
     if lower == '0010':
-        print("Not implemented")
-        return True
+        memory[val], reg['ac'] = reg['ac'], memory[val]
+        return (True, )
 
     # LDX
     if lower == '1000':
-        print("Machine Halted - unimplemented opcode")
-        return False
+        return (False, "Machine Halted - unimplemented opcode")
 
     # STX
     if lower == '1001':
-        print("Machine Halted - unimplemented opcode")
-        return False
+        return (False, "Machine Halted - unimplemented opcode")
 
     # EMX
     if lower == '1010':
-        print("Machine Halted - unimplemented opcode")
-        return False
+        return (False, "Machine Halted - unimplemented opcode")
 
     # Unknown command
-    print("Machine Halted - undefined opcode")
-    return False
+    return (False, "Machine Halted - undefined opcode")
 
 
 
@@ -114,59 +159,59 @@ def run_alu(memory, reg):
     # Grab instructions
     lower = bits[14:18]
 
+    # Get the indexing mode
+    mode, val = indexing_mode(memory, reg)
+
     # ADD
     if lower == '0000':
-        print("Not implemented")
-        return True
+        if mode in ['0000', '0001']:
+            reg['ac'] += val
+            return (True, )
+        else:
+            return (False, "Machine Halted - illegal addressing mode")
 
     # SUB
     if lower == '0001':
-        print("Not implemented")
-        return True
+        if mode in ['0000', '0001']:
+            reg['ac'] -= val
+            return (True, )
+        else:
+            return (False, "Machine Halted - illegal addressing mode")
 
     # CLR
     if lower == '0010':
-        print("Not implemented")
-        return True
+        return (True, "Not implemented")
 
     # COM
     if lower == '0011':
-        print("Not implemented")
-        return True
+        return (True, "Not implemented")
 
     # AND
     if lower == '0100':
-        print("Not implemented")
-        return True
+        return (True, "Not implemented")
 
     # OR
     if lower == '0101':
-        print("Not implemented")
-        return True
+        return (True, "Not implemented")
 
     # XOR
     if lower == '0110':
-        print("Not implemented")
-        return True
+        return (True, "Not implemented")
 
     # ADDX
     if lower == '1000':
-        print("Machine Halted - unimplemented opcode")
-        return False
+        return (False, "Machine Halted - unimplemented opcode")
 
     # SUBX
     if lower == '1001':
-        print("Machine Halted - unimplemented opcode")
-        return False
+        return (False, "Machine Halted - unimplemented opcode")
 
     # CLRX
     if lower == '1010':
-        print("Machine Halted - unimplemented opcode")
-        return False
+        return (False, "Machine Halted - unimplemented opcode")
 
     # Unknown command
-    print("Machine Halted - undefined opcode")
-    return False
+    return (False, "Machine Halted - undefined opcode")
 
 
 
@@ -178,33 +223,34 @@ def run_jump(memory, reg):
     # Grab instructions
     lower = bits[14:18]
 
+    # Get the indexing mode
+    mode, val = indexing_mode(memory, reg)
+
     # J
     if lower == '0000':
-        reg['pc'] += 1
-        print("Not implemented, incrementing PC for fun")
-        return True
+        if mode in ['0000', '0001']:
+            reg['pc'] = val
+            return (True, )
+        else:
+            return (False, "Machine Halted - illegal addressing mode")
 
     # JZ
     if lower == '0001':
         reg['pc'] += 1
-        print("Not implemented, incrementing PC for fun")
-        return True
+        return (True, "Not implemented, incrementing PC for fun")
 
     # JN
     if lower == '0010':
         reg['pc'] += 1
-        print("Not implemented, incrementing PC for fun")
-        return True
+        return (True, "Not implemented, incrementing PC for fun")
 
     # JP
     if lower == '0011':
         reg['pc'] += 1
-        print("Not implemented, incrementing PC for fun")
-        return True
+        return (True, "Not implemented, incrementing PC for fun")
 
     # Unknown command
-    print("Machine Halted - undefined opcode")
-    return False
+    return (False, "Machine Halted - undefined opcode")
 
 
 

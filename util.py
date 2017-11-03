@@ -1,5 +1,9 @@
 # Converts a hex or binary number to a printable form
 def to_printable(num, digits, binary=False):
+    # If negative
+    if num < 0:
+        num = num & 2**24-1
+
     # Convert (Defaults to hex, can also do binary)
     if binary:
         num = bin(num)

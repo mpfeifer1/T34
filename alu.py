@@ -212,7 +212,7 @@ def run_alu(memory, reg):
     # COM
     if lower == '0011':
         # Subtract the max possible by the current total to get val
-        reg['ac'] = 2**24-1 - reg['ac']
+        reg['ac'] = ~reg['ac']
         return (True, )
 
     # AND
@@ -297,6 +297,8 @@ def run_jump(memory, reg):
         if mode in ['0000']:
             if reg['ac'] == 0:
                 reg['pc'] = val
+            else:
+                reg['pc'] += 1
             return (True, )
         elif mode in ['0010', '0100', '0110']:
             return (False, "Machine Halted - unimplemented addressing mode")
@@ -308,6 +310,8 @@ def run_jump(memory, reg):
         if mode in ['0000']:
             if reg['ac'] < 0:
                 reg['pc'] = val
+            else:
+                reg['pc'] += 1
             return (True, )
         elif mode in ['0010', '0100', '0110']:
             return (False, "Machine Halted - unimplemented addressing mode")
@@ -319,6 +323,8 @@ def run_jump(memory, reg):
         if mode in ['0000']:
             if reg['ac'] > 0:
                 reg['pc'] = val
+            else:
+                reg['pc'] += 1
             return (True, )
         elif mode in ['0010', '0100', '0110']:
             return (False, "Machine Halted - unimplemented addressing mode")

@@ -101,12 +101,17 @@ def print_trace(memory, reg):
     bits = to_printable(instruction, 24, True)
     addridx = bits[18:22]
     upper = bits[12:14]
+    lower = bits[14:18]
     mode = inst[:3]
 
     # Get addressing mode
     if addridx == '0001':
         mode = "IMM"
     if upper == '00':
+        mode = "   "
+    if upper == '10' and lower == '0010':
+        mode = "   "
+    if upper == '10' and lower == '0011':
         mode = "   "
 
     if addridx not in ['0000', '0001']:

@@ -66,12 +66,7 @@ def main(infile):
     reg['dbus'] = 0
 
     # Print a menu for the user - disabled
-    # menu(memory, pc)
-
-    # Emulate the program
-    running = True
-    while running:
-        running = execute(memory, reg)
+    menu(memory, reg)
 
     # Terminate the emulator
     return
@@ -137,30 +132,31 @@ def print_result(memory, reg):
 
 
 # Checks that the given location is in memory
-def menu(memory, pc):
+def menu(memory, reg):
     # Print the menu
     print("T-34 Emulator ~~~ Enter a command")
     print("P: Parse memory")
     print("D: Dump memory")
     print("C: Print Program Counter")
+    print("E: Emulate Object")
     print("Q: Quit")
 
     # Get the user's selction
-    get_selection(memory, pc)
+    get_selection(memory, reg)
 
     return
 
 
 
 # Gets the user's mode selection, and launches it
-def get_selection(memory, pc):
+def get_selection(memory, reg):
     # Try to get selection
     print("Selection: ", end='')
     selection = input()
     selection = selection.upper()
 
     # While selection isn't valid, keep asking
-    while len(selection) != 1 or selection not in ['P', 'D', 'C', 'Q']:
+    while len(selection) != 1 or selection not in ['P', 'D', 'C', 'Q', 'E']:
         print("Please enter a single valid character")
         print("Selection: ", end='')
         selection = input()
@@ -183,7 +179,14 @@ def get_selection(memory, pc):
     # Get the program counter
     if selection == 'C':
         print()
-        print("PC:", pc)
+        print("PC:", reg['pc'])
+
+    if selection == 'E':
+        print()
+        # Emulate the program
+        running = True
+        while running:
+            running = execute(memory, reg)
 
     return
 

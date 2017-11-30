@@ -54,16 +54,10 @@ def main(infile):
     reg = {}
     reg['pc'] = data[-1][0]
     reg['ac'] = 0
-    reg['ic'] = 0
     reg['x0'] = 0
     reg['x1'] = 0
     reg['x2'] = 0
     reg['x3'] = 0
-    reg['ir'] = 0
-    reg['mar'] = 0
-    reg['alu'] = 0
-    reg['abus'] = 0
-    reg['dbus'] = 0
 
     # Print a menu for the user - disabled
     menu(memory, reg)
@@ -109,18 +103,16 @@ def print_trace(memory, reg):
         mode = "IMM"
     if upper == '00':
         mode = "   "
+    if upper == '10' and lower == '1010':
+        mode = "   "
     if upper == '10' and lower == '0010':
         mode = "   "
     if upper == '10' and lower == '0011':
         mode = "   "
 
     # Check if addressing mode is illegal
-    #if addridx not in ['0000', '0001']:
-    #    mode = "???"
-
-    #if addridx == '0001':
-    #    if upper in ['01', '11']:
-    #        mode = "???"
+    if addridx not in ['0000', '0001', '0010', '0100', '0110']:
+        mode = "???"
 
     print(addr + ":", inst, name, mode, sep='  ', end='  ')
 

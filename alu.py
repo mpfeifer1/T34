@@ -123,48 +123,57 @@ def run_memory(memory, reg):
 
     # LD
     if lower == '0000':
-        if mode in ['0000']:
+        if mode in ['0001']:
+            reg['ac'] = val
+            return (True, )
+        if mode in ['0000', '0010', '0100', '0110']:
             reg['ac'] = memory[val]
             return (True, )
-        if mode in ['0001']:
-            reg['ac'] = val;
-            return (True, )
-        elif mode in ['0010', '0100', '0110']:
-            return (False, "Machine Halted - unimplemented addressing mode")
         else:
             return (False, "Machine Halted - illegal addressing mode")
 
     # ST
     if lower == '0001':
-        if mode in ['0000']:
+        if mode in ['0000', '0010', '0100', '0110']:
             memory[val] = reg['ac']
             return (True, )
-        elif mode in ['0010', '0100', '0110']:
-            return (False, "Machine Halted - unimplemented addressing mode")
         else:
             return (False, "Machine Halted - illegal addressing mode")
 
     # EM
     if lower == '0010':
-        if mode in ['0000']:
+        if mode in ['0000', '0010', '0100', '0110']:
             memory[val], reg['ac'] = reg['ac'], memory[val]
             return (True, )
-        elif mode in ['0010', '0100', '0110']:
-            return (False, "Machine Halted - unimplemented addressing mode")
         else:
             return (False, "Machine Halted - illegal addressing mode")
 
     # LDX
     if lower == '1000':
-        return (False, "Machine Halted - unimplemented opcode")
+        if mode in ['0000']:
+            reg[dest] = memory[val]
+            return (True, )
+        if mode in ['0001']:
+            reg[dest] = val
+            return (True, )
+        else:
+            return (False, "Machine Halted - illegal addressing mode")
 
     # STX
     if lower == '1001':
-        return (False, "Machine Halted - unimplemented opcode")
+        if mode in ['0000']:
+            memory[val] = reg[dest]
+            return (True, )
+        else:
+            return (False, "Machine Halted - illegal addressing mode")
 
     # EMX
     if lower == '1010':
-        return (False, "Machine Halted - unimplemented opcode")
+        if mode in ['0000']:
+            reg[dest], memory[val] = memory[val], reg[dest]
+            return (True, )
+        else:
+            return (False, "Machine Halted - illegal addressing mode")
 
     # Unknown command
     return (False, "Machine Halted - undefined opcode")
@@ -184,27 +193,23 @@ def run_alu(memory, reg):
 
     # ADD
     if lower == '0000':
-        if mode in ['0000']:
+        if mode in ['0000', '0010', '0100', '0110']:
             reg['ac'] += memory[val]
             return (True, )
         if mode in ['0001']:
             reg['ac'] += val
             return (True, )
-        elif mode in ['0010', '0100', '0110']:
-            return (False, "Machine Halted - unimplemented addressing mode")
         else:
             return (False, "Machine Halted - illegal addressing mode")
 
     # SUB
     if lower == '0001':
-        if mode in ['0000']:
+        if mode in ['0000', '0010', '0100', '0110']:
             reg['ac'] -= memory[val]
             return (True, )
         if mode in ['0001']:
             reg['ac'] -= val
             return (True, )
-        elif mode in ['0010', '0100', '0110']:
-            return (False, "Machine Halted - unimplemented addressing mode")
         else:
             return (False, "Machine Halted - illegal addressing mode")
 
@@ -221,54 +226,63 @@ def run_alu(memory, reg):
 
     # AND
     if lower == '0100':
-        if mode in ['0000']:
+        if mode in ['0000', '0010', '0100', '0110']:
             reg['ac'] &= memory[val]
             return (True, )
         if mode in ['0001']:
             reg['ac'] &= val
             return (True, )
-        elif mode in ['0010', '0100', '0110']:
-            return (False, "Machine Halted - unimplemented addressing mode")
         else:
             return (False, "Machine Halted - illegal addressing mode")
 
     # OR
     if lower == '0101':
-        if mode in ['0000']:
+        if mode in ['0000', '0010', '0100', '0110']:
             reg['ac'] |= memory[val]
             return (True, )
         if mode in ['0001']:
             reg['ac'] |= val
             return (True, )
-        elif mode in ['0010', '0100', '0110']:
-            return (False, "Machine Halted - unimplemented addressing mode")
         else:
             return (False, "Machine Halted - illegal addressing mode")
 
     # XOR
     if lower == '0110':
-        if mode in ['0000']:
+        if mode in ['0000', '0010', '0100', '0110']:
             reg['ac'] ^= memory[val]
             return (True, )
         if mode in ['0001']:
             reg['ac'] ^= val
             return (True, )
-        elif mode in ['0010', '0100', '0110']:
-            return (False, "Machine Halted - unimplemented addressing mode")
         else:
             return (False, "Machine Halted - illegal addressing mode")
 
     # ADDX
     if lower == '1000':
-        return (False, "Machine Halted - unimplemented opcode")
+        if mode in ['0000', '0010', '0100', '0110']:
+            reg[dest] += memory[val]
+            return (True, )
+        if mode in ['0001']:
+            reg[dest] += val
+            return (True, )
+        else:
+            return (False, "Machine Halted - illegal addressing mode")
 
     # SUBX
     if lower == '1001':
-        return (False, "Machine Halted - unimplemented opcode")
+        if mode in ['0000', '0010', '0100', '0110']:
+            reg[dest] -= memory[val]
+            return (True, )
+        if mode in ['0001']:
+            reg[dest] -= val
+            return (True, )
+        else:
+            return (False, "Machine Halted - illegal addressing mode")
 
     # CLRX
     if lower == '1010':
-        return (False, "Machine Halted - unimplemented opcode")
+        reg[dest] = 0
+        return (True, )
 
     # Unknown command
     return (False, "Machine Halted - undefined opcode")
@@ -288,50 +302,42 @@ def run_jump(memory, reg):
 
     # J
     if lower == '0000':
-        if mode in ['0000']:
+        if mode in ['0000', '0010', '0100', '0110']:
             reg['pc'] = val
             return (True, )
-        elif mode in ['0010', '0100', '0110']:
-            return (False, "Machine Halted - unimplemented addressing mode")
         else:
             return (False, "Machine Halted - illegal addressing mode")
 
     # JZ
     if lower == '0001':
-        if mode in ['0000']:
+        if mode in ['0000', '0010', '0100', '0110']:
             if reg['ac'] == 0:
                 reg['pc'] = val
             else:
                 reg['pc'] += 1
             return (True, )
-        elif mode in ['0010', '0100', '0110']:
-            return (False, "Machine Halted - unimplemented addressing mode")
         else:
             return (False, "Machine Halted - illegal addressing mode")
 
     # JN
     if lower == '0010':
-        if mode in ['0000']:
+        if mode in ['0000', '0010', '0100', '0110']:
             if reg['ac'] < 0:
                 reg['pc'] = val
             else:
                 reg['pc'] += 1
             return (True, )
-        elif mode in ['0010', '0100', '0110']:
-            return (False, "Machine Halted - unimplemented addressing mode")
         else:
             return (False, "Machine Halted - illegal addressing mode")
 
     # JP
     if lower == '0011':
-        if mode in ['0000']:
+        if mode in ['0000', '0010', '0100', '0110']:
             if reg['ac'] > 0:
                 reg['pc'] = val
             else:
                 reg['pc'] += 1
             return (True, )
-        elif mode in ['0010', '0100', '0110']:
-            return (False, "Machine Halted - unimplemented addressing mode")
         else:
             return (False, "Machine Halted - illegal addressing mode")
 

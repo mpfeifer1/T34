@@ -84,6 +84,12 @@ for line in data:
             address = to_printable(int(line[-1],16), 12, True)
         if line[1] == 'imm':
             address = to_printable(int(line[-1]   ), 12, True)
+        if line[1] == 'idx':
+            address = to_printable(int(line[-1],16), 12, True)
+        if line[1] == 'idr':
+            address = to_printable(int(line[-1],16), 12, True)
+        if line[1] == 'xdr':
+            address = to_printable(int(line[-1],16), 12, True)
 
     if line[0] == 'clrx':
         reg = goodreg(line[1])

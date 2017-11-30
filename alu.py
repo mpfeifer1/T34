@@ -34,18 +34,22 @@ def indexing_mode(memory, reg):
 
     # Indexed
     if indexmode == '0010':
-        pass
+        ea = int(bits[0:12], 2)
+        ea += reg[indexreg]
 
     # Indirect
     if indexmode == '0100':
-        pass
+        ea = int(bits[0:12], 2)
+        ea = memory[ea] >> 12
 
     # Indexed Indirect
     if indexmode == '0110':
-        pass
+        ea = int(bits[0:12], 2)
+        ea += reg[indexreg]
+        ea = memory[ea] >> 12
 
     # Return
-    return indexmode, ea
+    return indexmode, ea, indexreg
 
 
 
@@ -58,7 +62,7 @@ def run_instruction(memory, reg):
     upper = bits[12:14]
 
     # Get indexing mode (EA)
-    ea = indexing_mode(memory, reg)
+    mode, ea, dest = indexing_mode(memory, reg)
 
     # Whether to keep running after command
     running = (True, )
@@ -115,7 +119,7 @@ def run_memory(memory, reg):
     lower = bits[14:18]
 
     # Get the indexing mode
-    mode, val = indexing_mode(memory, reg)
+    mode, val, dest = indexing_mode(memory, reg)
 
     # LD
     if lower == '0000':
@@ -176,7 +180,7 @@ def run_alu(memory, reg):
     lower = bits[14:18]
 
     # Get the indexing mode
-    mode, val = indexing_mode(memory, reg)
+    mode, val, dest = indexing_mode(memory, reg)
 
     # ADD
     if lower == '0000':
@@ -280,7 +284,7 @@ def run_jump(memory, reg):
     lower = bits[14:18]
 
     # Get the indexing mode
-    mode, val = indexing_mode(memory, reg)
+    mode, val, dest = indexing_mode(memory, reg)
 
     # J
     if lower == '0000':

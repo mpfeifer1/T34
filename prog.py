@@ -115,12 +115,12 @@ def print_trace(memory, reg):
         mode = "   "
 
     # Check if addressing mode is illegal
-    if addridx not in ['0000', '0001']:
-        mode = "???"
+    #if addridx not in ['0000', '0001']:
+    #    mode = "???"
 
-    if addridx == '0001':
-        if upper in ['01', '11']:
-            mode = "???"
+    #if addridx == '0001':
+    #    if upper in ['01', '11']:
+    #        mode = "???"
 
     print(addr + ":", inst, name, mode, sep='  ', end='  ')
 

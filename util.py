@@ -13,6 +13,10 @@ def to_printable(num, digits, binary=False):
     # Strip beginning
     num = str(num)[2:]
 
+    # Remove extra bits from beginning
+    while(len(num) > digits):
+        num = num[1:]
+
     # Pad beginning with desired number of 0's
     while(len(num) < digits):
         num = '0' + num

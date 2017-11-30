@@ -81,9 +81,9 @@ for line in data:
             mode = '0110'
 
         if line[1] == 'dir':
-            addr = to_printable(int(line[-1],16), 12, True)
+            address = to_printable(int(line[-1],16), 12, True)
         if line[1] == 'imm':
-            addr = to_printable(int(line[-1]   ), 12, True)
+            address = to_printable(int(line[-1]   ), 12, True)
 
     if line[0] == 'clrx':
         reg = goodreg(line[1])

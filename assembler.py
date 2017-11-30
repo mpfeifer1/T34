@@ -31,11 +31,11 @@ for line in data:
         opcode = '010001'
     if line[0] == 'em':
         opcode = '010010'
-    if line[0] == 'ld':
+    if line[0] == 'ldx':
         opcode = '011000'
-    if line[0] == 'ld':
+    if line[0] == 'stx':
         opcode = '011001'
-    if line[0] == 'ld':
+    if line[0] == 'emx':
         opcode = '011010'
 
     if line[0] == 'add':
@@ -95,5 +95,12 @@ for line in data:
         address = bin(int(line[2], 16))[2:]
 
     command = address + opcode + mode + reg
+
+    if line[0] not in ['clr', 'com', 'halt', 'nop', 'clrx', 'ld', 'st', 'em', 'ldx', 'stx', 'emx', 'add', 'sub', 'and', 'or', 'xor', 'addx', 'subx', 'j', 'jz', 'jn', 'jp']:
+        command = to_printable(int(line[0]), 24,True)
+
     command = int(command, 2)
     print(to_printable(command, 6), end=' ')
+
+print()
+print(0)

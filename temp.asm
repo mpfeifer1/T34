@@ -1,4 +1,3 @@
-halt
 nop
 ld   dir     0c4
 st   idx
@@ -20,3 +19,7 @@ j    dir 0c4 0c4
 jz   idx 0c4
 jn   idr 0c4
 jp   xdr 0c4
+halt
+100
+1000
+10000

@@ -95,14 +95,17 @@ def print_trace(memory, reg):
     addr = to_printable(pc, 3)
     inst = to_printable(instruction, 6)
 
-    # Get data necessary for addressing mode
+    # Get data necessary for indexing mode
     bits = to_printable(instruction, 24, True)
     addridx = bits[18:22]
     upper = bits[12:14]
     lower = bits[14:18]
-    mode = inst[:3]
 
-    # Get addressing mode
+    # Get indexing mode (EA)
+    temp1, ea, temp2 = indexing_mode(memory, reg)
+    mode = to_printable(ea, 3)
+
+    # Get indexing mode
     if addridx == '0001':
         mode = "IMM"
     if upper == '00':
@@ -114,7 +117,7 @@ def print_trace(memory, reg):
     if upper == '10' and lower == '0011':
         mode = "   "
 
-    # Check if addressing mode is illegal
+    # Check if indexing mode is illegal
     if addridx not in ['0000', '0001', '0010', '0100', '0110']:
         mode = "???"
 

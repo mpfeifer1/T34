@@ -126,7 +126,7 @@ def run_memory(memory, reg):
         if mode in ['0001']:
             reg['ac'] = val
             return (True, )
-        if mode in ['0000', '0010', '0100', '0110']:
+        elif mode in ['0000', '0010', '0100', '0110']:
             reg['ac'] = memory[val]
             return (True, )
         else:
@@ -151,7 +151,7 @@ def run_memory(memory, reg):
     # LDX
     if lower == '1000':
         if mode in ['0000']:
-            reg[dest] = memory[val]
+            reg[dest] = memory[val] >> 12
             return (True, )
         if mode in ['0001']:
             reg[dest] = val
@@ -162,7 +162,7 @@ def run_memory(memory, reg):
     # STX
     if lower == '1001':
         if mode in ['0000']:
-            memory[val] = reg[dest]
+            memory[val] = reg[dest] << 12
             return (True, )
         else:
             return (False, "Machine Halted - illegal addressing mode")
@@ -170,7 +170,7 @@ def run_memory(memory, reg):
     # EMX
     if lower == '1010':
         if mode in ['0000']:
-            reg[dest], memory[val] = memory[val], reg[dest]
+            reg[dest], memory[val] = memory[val] >> 12, reg[dest] << 12
             return (True, )
         else:
             return (False, "Machine Halted - illegal addressing mode")
@@ -196,7 +196,7 @@ def run_alu(memory, reg):
         if mode in ['0000', '0010', '0100', '0110']:
             reg['ac'] += memory[val]
             return (True, )
-        if mode in ['0001']:
+        elif mode in ['0001']:
             reg['ac'] += val
             return (True, )
         else:
@@ -207,7 +207,7 @@ def run_alu(memory, reg):
         if mode in ['0000', '0010', '0100', '0110']:
             reg['ac'] -= memory[val]
             return (True, )
-        if mode in ['0001']:
+        elif mode in ['0001']:
             reg['ac'] -= val
             return (True, )
         else:
@@ -229,7 +229,7 @@ def run_alu(memory, reg):
         if mode in ['0000', '0010', '0100', '0110']:
             reg['ac'] &= memory[val]
             return (True, )
-        if mode in ['0001']:
+        elif mode in ['0001']:
             reg['ac'] &= val
             return (True, )
         else:
@@ -240,7 +240,7 @@ def run_alu(memory, reg):
         if mode in ['0000', '0010', '0100', '0110']:
             reg['ac'] |= memory[val]
             return (True, )
-        if mode in ['0001']:
+        elif mode in ['0001']:
             reg['ac'] |= val
             return (True, )
         else:
@@ -251,7 +251,7 @@ def run_alu(memory, reg):
         if mode in ['0000', '0010', '0100', '0110']:
             reg['ac'] ^= memory[val]
             return (True, )
-        if mode in ['0001']:
+        elif mode in ['0001']:
             reg['ac'] ^= val
             return (True, )
         else:
@@ -262,7 +262,7 @@ def run_alu(memory, reg):
         if mode in ['0000', '0010', '0100', '0110']:
             reg[dest] += memory[val]
             return (True, )
-        if mode in ['0001']:
+        elif mode in ['0001']:
             reg[dest] += val
             return (True, )
         else:
@@ -273,7 +273,7 @@ def run_alu(memory, reg):
         if mode in ['0000', '0010', '0100', '0110']:
             reg[dest] -= memory[val]
             return (True, )
-        if mode in ['0001']:
+        elif mode in ['0001']:
             reg[dest] -= val
             return (True, )
         else:

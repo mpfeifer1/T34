@@ -60,7 +60,11 @@ def main(infile):
     reg['x3'] = 0
 
     # Print a menu for the user - disabled
-    menu(memory, reg)
+    while True:
+        sel = menu(memory, reg)
+        if sel in ['q', 'Q']:
+            break
+        print()
 
     # Terminate the emulator
     return
@@ -144,9 +148,9 @@ def menu(memory, reg):
     print("Q: Quit")
 
     # Get the user's selction
-    get_selection(memory, reg)
+    sel = get_selection(memory, reg)
 
-    return
+    return sel
 
 
 
@@ -190,7 +194,7 @@ def get_selection(memory, reg):
         while running:
             running = execute(memory, reg)
 
-    return
+    return selection
 
 
 

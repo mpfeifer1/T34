@@ -2,6 +2,18 @@ from util import *
 
 
 
+def fix(n, bits = 24):
+    n %= (1 << bits)
+    return n
+
+
+def twoscomplement(n, bits = 24):
+    n ^= (1 << bits) - 1
+    n += 1
+    return n
+
+
+
 def indexing_mode(memory, reg):
     # Get instruction in binary
     instruction = memory[reg['pc']]
@@ -195,9 +207,11 @@ def run_alu(memory, reg):
     if lower == '0000':
         if mode in ['0000', '0010', '0100', '0110']:
             reg['ac'] += memory[val]
+            reg['ac'] = fix(reg['ac'])
             return (True, )
         elif mode in ['0001']:
             reg['ac'] += val
+            reg['ac'] = fix(reg['ac'])
             return (True, )
         else:
             return (False, "Machine Halted - illegal addressing mode")
@@ -205,10 +219,12 @@ def run_alu(memory, reg):
     # SUB
     if lower == '0001':
         if mode in ['0000', '0010', '0100', '0110']:
-            reg['ac'] -= memory[val]
+            reg['ac'] += twoscomplement(memory[val])
+            reg['ac'] = fix(reg['ac'])
             return (True, )
         elif mode in ['0001']:
-            reg['ac'] -= val
+            reg['ac'] += twoscomplement(val, 12)
+            reg['ac'] = fix(reg['ac'])
             return (True, )
         else:
             return (False, "Machine Halted - illegal addressing mode")
@@ -220,8 +236,8 @@ def run_alu(memory, reg):
 
     # COM
     if lower == '0011':
-        # Subtract the max possible by the current total to get val
         reg['ac'] = ~reg['ac']
+        reg['ac'] = fix(reg['ac'])
         return (True, )
 
     # AND
@@ -259,22 +275,26 @@ def run_alu(memory, reg):
 
     # ADDX
     if lower == '1000':
-        if mode in ['0000', '0010', '0100', '0110']:
+        if mode in ['0000']:
             reg[dest] += memory[val]
+            reg[dest] = fix(reg[dest], 12)
             return (True, )
         elif mode in ['0001']:
             reg[dest] += val
+            reg[dest] = fix(reg[dest], 12)
             return (True, )
         else:
             return (False, "Machine Halted - illegal addressing mode")
 
     # SUBX
     if lower == '1001':
-        if mode in ['0000', '0010', '0100', '0110']:
-            reg[dest] -= memory[val]
+        if mode in ['0000']:
+            reg[dest] += twoscomplement(memory[val])
+            reg[dest] = fix(reg[dest], 12)
             return (True, )
         elif mode in ['0001']:
-            reg[dest] -= val
+            reg[dest] += twoscomplement(memory[val], 12)
+            reg[dest] = fix(reg[dest], 12)
             return (True, )
         else:
             return (False, "Machine Halted - illegal addressing mode")
@@ -322,7 +342,7 @@ def run_jump(memory, reg):
     # JN
     if lower == '0010':
         if mode in ['0000', '0010', '0100', '0110']:
-            if reg['ac'] < 0:
+            if reg['ac'] >= (1 << 23):
                 reg['pc'] = val
             else:
                 reg['pc'] += 1
@@ -333,7 +353,7 @@ def run_jump(memory, reg):
     # JP
     if lower == '0011':
         if mode in ['0000', '0010', '0100', '0110']:
-            if reg['ac'] > 0:
+            if reg['ac'] > 0 and reg['ac'] < (1 << 23):
                 reg['pc'] = val
             else:
                 reg['pc'] += 1

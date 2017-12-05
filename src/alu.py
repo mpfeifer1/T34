@@ -236,8 +236,7 @@ def run_alu(memory, reg):
 
     # COM
     if lower == '0011':
-        reg['ac'] = ~reg['ac']
-        reg['ac'] = fix(reg['ac'])
+        reg['ac'] ^= (1 << 24) - 1
         return (True, )
 
     # AND
@@ -293,7 +292,7 @@ def run_alu(memory, reg):
             reg[dest] = fix(reg[dest], 12)
             return (True, )
         elif mode in ['0001']:
-            reg[dest] += twoscomplement(memory[val], 12)
+            reg[dest] += twoscomplement(val)
             reg[dest] = fix(reg[dest], 12)
             return (True, )
         else:

@@ -104,14 +104,32 @@ def print_trace(memory, reg):
     # Get indexing mode (EA)
     temp1, ea, temp2 = indexing_mode(memory, reg)
     mode = to_printable(ea, 3)
+    if addridx == '0001':
+        mode = "IMM"
 
     # Check if indexing mode is illegal
     if addridx not in ['0000', '0001', '0010', '0100', '0110']:
         mode = "???"
 
-    # Get indexing mode
-    if addridx == '0001':
-        mode = "IMM"
+    # Check if not allowed indexing mode for immediates
+    if addridx == "0001":
+        if upper == "01" and lower == "0001":
+            mode = "???"
+        if upper == "01" and lower == "0010":
+            mode = "???"
+        if upper == "01" and lower == "1001":
+            mode = "???"
+        if upper == "01" and lower == "1010":
+            mode = "???"
+        if upper == "11":
+            mode = "???"
+
+    # Check if not allowed mode for 'x' commands
+    if lower in ['1000', '1001', '1010']:
+        if addridx in ['0010', '0100', '0110']:
+            mode = "???"
+
+    # Get blank indexing mode
     if upper == '00':
         mode = "   "
     if upper == '10' and lower == '1010':
@@ -121,6 +139,7 @@ def print_trace(memory, reg):
     if upper == '10' and lower == '0011':
         mode = "   "
 
+    # Print line
     print(addr + ":", inst, name, mode, sep='  ', end='  ')
 
     return

@@ -223,7 +223,7 @@ def run_alu(memory, reg):
             reg['ac'] = fix(reg['ac'])
             return (True, )
         elif mode in ['0001']:
-            reg['ac'] += twoscomplement(val, 12)
+            reg['ac'] += twoscomplement(val)
             reg['ac'] = fix(reg['ac'])
             return (True, )
         else:

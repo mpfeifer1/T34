@@ -25,12 +25,9 @@ def main(infile):
         # Split line
         line = line.split()
 
-        # Cast to int from hex/int
+        # Cast to int from hex
         for i in range(len(line)):
-            if i == 0 or i > 1:
-                line[i] = int(line[i], 16)
-            else:
-                line[i] = int(line[i])
+            line[i] = int(line[i], 16)
 
         # Toss it into data
         data.append(line)

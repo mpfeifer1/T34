@@ -2,18 +2,6 @@ from util import *
 
 
 
-def fix(n, bits = 24):
-    n %= (1 << bits)
-    return n
-
-
-def twoscomplement(n, bits = 24):
-    n ^= (1 << bits) - 1
-    n += 1
-    return n
-
-
-
 def indexing_mode(memory, reg):
     # Get instruction in binary
     instruction = memory[reg['pc']]

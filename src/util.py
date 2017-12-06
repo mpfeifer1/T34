@@ -23,3 +23,15 @@ def to_printable(num, digits, binary=False):
 
     # Return
     return num
+
+
+
+def fix(n, bits = 24):
+    n %= (1 << bits)
+    return n
+
+
+def twoscomplement(n, bits = 24):
+    n ^= (1 << bits) - 1
+    n += 1
+    return n

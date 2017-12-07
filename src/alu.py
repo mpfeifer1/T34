@@ -22,7 +22,7 @@ def indexing_mode(memory, reg):
         indexreg = 'x3'
 
     # Find corresponding EA
-    ea = None
+    ea = 0
 
     # Direct
     if indexmode == '0000':
@@ -35,6 +35,7 @@ def indexing_mode(memory, reg):
     # Indexed
     if indexmode == '0010':
         ea = int(bits[0:12], 2)
+        ea = fix(ea, 12)
         ea += reg[indexreg]
 
     # Indirect
@@ -46,7 +47,11 @@ def indexing_mode(memory, reg):
     if indexmode == '0110':
         ea = int(bits[0:12], 2)
         ea += reg[indexreg]
+        ea = fix(ea, 12)
         ea = memory[ea] >> 12
+
+    # Make EA is good value
+    ea = fix(ea, 12)
 
     # Return
     return indexmode, ea, indexreg
@@ -84,6 +89,7 @@ def run_instruction(memory, reg):
         running = run_jump(memory, reg)
     else:
         reg['pc'] += 1
+        reg['pc'] = fix(reg['pc'], 12)
 
     return running
 
@@ -320,8 +326,10 @@ def run_jump(memory, reg):
         if mode in ['0000', '0010', '0100', '0110']:
             if reg['ac'] == 0:
                 reg['pc'] = val
+                reg['pc'] = fix(reg['pc'], 12)
             else:
                 reg['pc'] += 1
+                reg['pc'] = fix(reg['pc'], 12)
             return (True, )
         else:
             return (False, "Machine Halted - illegal addressing mode")
@@ -331,8 +339,10 @@ def run_jump(memory, reg):
         if mode in ['0000', '0010', '0100', '0110']:
             if reg['ac'] >= (1 << 23):
                 reg['pc'] = val
+                reg['pc'] = fix(reg['pc'], 12)
             else:
                 reg['pc'] += 1
+                reg['pc'] = fix(reg['pc'], 12)
             return (True, )
         else:
             return (False, "Machine Halted - illegal addressing mode")
@@ -342,8 +352,10 @@ def run_jump(memory, reg):
         if mode in ['0000', '0010', '0100', '0110']:
             if reg['ac'] > 0 and reg['ac'] < (1 << 23):
                 reg['pc'] = val
+                reg['pc'] = fix(reg['pc'], 12)
             else:
                 reg['pc'] += 1
+                reg['pc'] = fix(reg['pc'], 12)
             return (True, )
         else:
             return (False, "Machine Halted - illegal addressing mode")
